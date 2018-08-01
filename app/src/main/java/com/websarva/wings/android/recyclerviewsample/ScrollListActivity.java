@@ -1,16 +1,21 @@
 package com.websarva.wings.android.recyclerviewsample;
 
-import android.content.Intent;
+import android.graphics.Color;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -24,6 +29,32 @@ public class ScrollListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scroll_list);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+
+        toolbar.setLogo(R.mipmap.ic_launcher);
+
+        setSupportActionBar(toolbar);
+
+        CollapsingToolbarLayout toolbarLayout = findViewById(R.id.toolbarLayout);
+
+        toolbarLayout.setTitle(getString(R.string.toolbar_title));
+
+        toolbarLayout.setExpandedTitleColor(Color.WHITE);
+
+        toolbarLayout.setCollapsedTitleTextColor(Color.LTGRAY);
+
+        RecyclerView lvMenu = findViewById(R.id.lvMenu);
+
+        LinearLayoutManager layout = new LinearLayoutManager(ScrollListActivity.this);
+
+        lvMenu.setLayoutManager(layout);
+
+        List<Map<String, Object>> menuList = createTeishokuList();
+
+        RecyclerListAdapter adapter = new RecyclerListAdapter(menuList);
+
+        lvMenu.setAdapter(adapter);
     }
     private List<Map<String, Object>> createTeishokuList() {
 
@@ -97,5 +128,78 @@ public class ScrollListActivity extends AppCompatActivity {
         menuList.add(menu);
 
         return menuList;
+    }
+    private class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListViewHolder> {
+
+        private List<Map<String, Object>> _listData;
+
+
+        public RecyclerListAdapter(List<Map<String, Object>> listData) {
+
+            _listData = listData;
+        }
+
+        @Override
+        public RecyclerListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+            LayoutInflater inflater = LayoutInflater.from(ScrollListActivity.this);
+
+            View view = inflater.inflate(R.layout.row, parent, false);
+
+            view.setOnClickListener(new ItemClickListener());
+
+            RecyclerListViewHolder holder = new RecyclerListViewHolder(view);
+
+            return holder;
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerListViewHolder holder, int position) {
+
+            Map<String, Object> item = _listData.get(position);
+
+            String menuName = (String) item.get("name");
+
+            int menuPrice = (Integer) item.get("price");
+
+            String menuPriceStr = String.valueOf(menuPrice);
+
+            holder._tvMenuName.setText(menuName);
+            holder._tvMenuPrice.setText(menuPriceStr);
+        }
+
+        @Override
+        public int getItemCount() {
+
+            return _listData.size();
+        }
+    }
+    private class RecyclerListViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView _tvMenuName;
+
+        public TextView _tvMenuPrice;
+
+        public RecyclerListViewHolder(View itemView) {
+
+            super(itemView);
+
+            _tvMenuName = itemView.findViewById(R.id.tvMenuName);
+            _tvMenuPrice = itemView.findViewById(R.id.tvMenuPrice);
+        }
+    }
+    private class ItemClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+
+            TextView tvMenuName =  view.findViewById(R.id.tvMenuName);
+
+            String menuName = tvMenuName.getText().toString();
+
+            String msg = getString(R.string.msg_header) + menuName;
+
+            Toast.makeText(ScrollListActivity.this, msg, Toast.LENGTH_SHORT).show();
+        }
     }
 }
