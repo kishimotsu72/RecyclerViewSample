@@ -55,6 +55,12 @@ public class ScrollListActivity extends AppCompatActivity {
         RecyclerListAdapter adapter = new RecyclerListAdapter(menuList);
 
         lvMenu.setAdapter(adapter);
+
+        //P389 区切り線とリスな設定のコードを記述する
+        DividerItemDecoration decorator = new DividerItemDecoration(ScrollListActivity.this,layout.getOrientation());
+        lvMenu.addItemDecoration(decorator);
+
+
     }
     private List<Map<String, Object>> createTeishokuList() {
 
@@ -145,6 +151,7 @@ public class ScrollListActivity extends AppCompatActivity {
             LayoutInflater inflater = LayoutInflater.from(ScrollListActivity.this);
 
             View view = inflater.inflate(R.layout.row, parent, false);
+
 
             view.setOnClickListener(new ItemClickListener());
 
